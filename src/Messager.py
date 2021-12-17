@@ -9,7 +9,8 @@ class Messager():
         self.model: AppModel = model
         self.events: Events = model.events
         self.bot: Bot = model.bot
-        
+
+    def listen(self):
         self.model.events.send_message += self.send_telegram_message
 
     def send_telegram_message(self):

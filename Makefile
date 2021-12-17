@@ -26,6 +26,9 @@ run-locally: ## Runs app localy without container
 	export TOKEN=$(TELEGRAM_TOKEN) && \
 	uvicorn main:app --reload --port ${LOCAL_PORT}
 
+test: ## Runs test and return coverage report
+	pytest --cov=src tests/
+
 .PHONY: help
 
 help:  ## Display this help

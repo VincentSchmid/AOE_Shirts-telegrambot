@@ -18,6 +18,7 @@ class Instance():
         self._state: State = self._state_factory.get_state(
             StateFactory.StateType.IDLE)
         self._messager: Messager = messager
+        self._messager.listen()
 
         self.model.events.started += self.on_started
         self.model.events.background_set += self.on_background_set
