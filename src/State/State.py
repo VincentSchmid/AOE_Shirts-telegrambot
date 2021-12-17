@@ -1,4 +1,4 @@
-from Model import AppModel
+from ..Model import AppModel
 
 
 class State():

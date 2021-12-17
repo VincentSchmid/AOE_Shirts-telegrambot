@@ -2,15 +2,15 @@ from telegram import Update
 from telegram.files.file import File
 from telegram.ext import CallbackContext
 
-from Model import AppModel
-from State.State import State
-from State.Idle import Idle
-from State.ReceivingShirts import ReceivingShirts
-from State.ReturningResult import ReturningResult
-from State.SettingBackground import SettingBackground
-from State.Help import Help
-from Messager import Messager
-from Shirt_Processing import full_pipeline
+from .Model import AppModel
+from .State.State import State
+from .State.Idle import Idle
+from .State.ReceivingShirts import ReceivingShirts
+from .State.ReturningResult import ReturningResult
+from .State.SettingBackground import SettingBackground
+from .State.Help import Help
+from .Messager import Messager
+from .Shirt_Processing import full_pipeline
 from pathlib import Path
 
 

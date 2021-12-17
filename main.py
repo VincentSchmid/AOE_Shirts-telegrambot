@@ -4,9 +4,9 @@ import http
 from flask import Flask, request
 from werkzeug.wrappers import Response
 
-from Model import AppModel
-from Instance import Instance
-import options
+from src.Model import AppModel
+from src.Instance import Instance
+import src.options as options
 
 from telegram import Bot, Update
 from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler
