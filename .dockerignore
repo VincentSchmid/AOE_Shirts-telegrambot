@@ -1,0 +1,7 @@
+Makefile
+*.mk
+.python-version
+*/__pycache__
+testing.py
+*.jpg
+*.png
