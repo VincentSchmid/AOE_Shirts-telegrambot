@@ -23,6 +23,7 @@ run-container: ## Builds the container and runs it locally
 	# docker exec -t -i $(CONTAINER_NAME) /bin/bash
 
 run-locally: ## Runs app localy without container
+	export TOKEN=$(TELEGRAM_TOKEN) && \
 	uvicorn main:app --reload --port ${LOCAL_PORT}
 
 .PHONY: help
