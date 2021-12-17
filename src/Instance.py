@@ -10,7 +10,7 @@ from .State.ReturningResult import ReturningResult
 from .State.SettingBackground import SettingBackground
 from .State.Help import Help
 from .Messager import Messager
-from .Shirt_Processing import full_pipeline
+from .ShirtProcessing import full_pipeline
 from pathlib import Path
 
 
@@ -69,5 +69,6 @@ class Instance():
         foreground_data = foreground.download_as_bytearray()
 
         self.model.result = full_pipeline(
-            self.model.url, background_filename, background_data, foreground_filename, foreground_data)
+            self.model.url, self.options["PARAMS"]["RESIZE_PERCENTAGE"], 
+            background_filename, background_data, foreground_filename, foreground_data)
         self._messager.send_file()

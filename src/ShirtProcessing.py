@@ -3,8 +3,8 @@ import requests
 from pathlib import Path
 
 
-def full_pipeline(url, background_filename: str, background_data: bytes, foreground_filename: str, foreground_data: bytes) -> bytes:
-    req_url = url + "/full_pipeline/?resize_percentage=93"
+def full_pipeline(url, resize_percentage:int, background_filename: str, background_data: bytes, foreground_filename: str, foreground_data: bytes) -> bytes:
+    req_url = url + f"/full_pipeline/?resize_percentage={resize_percentage}"
 
     background_filetype = get_imagetype(background_filename)
     background_filetype = get_imagetype(foreground_filename)

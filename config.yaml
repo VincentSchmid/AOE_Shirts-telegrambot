@@ -1,3 +1,5 @@
+PARAMS:
+  RESIZE_PERCENTAGE: 93
 APP:
   ERROR:
     DONE: command done
