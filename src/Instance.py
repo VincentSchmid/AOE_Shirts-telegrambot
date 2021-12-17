@@ -3,23 +3,21 @@ from telegram.files.file import File
 from telegram.ext import CallbackContext
 
 from .Model import AppModel
+from .State.StateFactory import StateFactory
 from .State.State import State
-from .State.Idle import Idle
-from .State.ReceivingShirts import ReceivingShirts
-from .State.ReturningResult import ReturningResult
-from .State.SettingBackground import SettingBackground
-from .State.Help import Help
 from .Messager import Messager
 from .ShirtProcessing import full_pipeline
 from pathlib import Path
 
 
 class Instance():
-    def __init__(self, model: AppModel, options: dict) -> None:
+    def __init__(self, model: AppModel, options: dict, state_factory: StateFactory, messager: Messager) -> None:
         self.options: dict = options
         self.model: AppModel = model
-        self._state: State = Idle(self.model, self.options)
-        self._messager: Messager = Messager(self.model)
+        self._state_factory: StateFactory = state_factory
+        self._state: State = self._state_factory.get_state(
+            StateFactory.StateType.IDLE)
+        self._messager: Messager = messager
 
         self.model.events.started += self.on_started
         self.model.events.background_set += self.on_background_set
@@ -32,7 +30,8 @@ class Instance():
 
     def on_help_command(self, update: Update, context: CallbackContext):
         self.model.update = update
-        self._state = Help(self.model, self.options)
+        self._state = self._state_factory.get_state(
+            StateFactory.StateType.HELP)
 
     def on_done_command(self, update: Update, context: CallbackContext):
         self.model.update = update
@@ -47,13 +46,16 @@ class Instance():
         self._state.document_received(update.message.effective_attachment[-1])
 
     def on_started(self):
-        self._state = SettingBackground(self.model, self.options)
+        self._state = self._state_factory.get_state(
+            StateFactory.StateType.SETTING_BACKGROUND)
 
     def on_background_set(self):
-        self._state = ReceivingShirts(self.model, self.options)
+        self._state = self._state_factory.get_state(
+            StateFactory.StateType.RECEIVING_SHIRTS)
 
     def on_shirts_received(self):
-        self._state = ReturningResult(self.model, self.options)
+        self._state = self._state_factory.get_state(
+            StateFactory.StateType.RETURNING_RESULT)
 
     def on_return_results(self):
         for shirt in self.model.shirts:
@@ -69,6 +71,6 @@ class Instance():
         foreground_data = foreground.download_as_bytearray()
 
         self.model.result = full_pipeline(
-            self.model.url, self.options["PARAMS"]["RESIZE_PERCENTAGE"], 
+            self.model.url, self.options["PARAMS"]["RESIZE_PERCENTAGE"],
             background_filename, background_data, foreground_filename, foreground_data)
         self._messager.send_file()

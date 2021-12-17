@@ -4,8 +4,10 @@ import http
 from flask import Flask, request
 from werkzeug.wrappers import Response
 
+from src.State.StateFactory import StateFactory
 from src.Model import AppModel
 from src.Instance import Instance
+from src.Messager import Messager
 import src.options as options
 
 from telegram import Bot, Update
@@ -13,15 +15,18 @@ from telegram.ext import Dispatcher, CommandHandler, Filters, MessageHandler
 
 
 TELEGRAM_TOKEN = os.environ["TOKEN"]
-CONFIG_FILENAME = "config.yaml" if "CONFIG_FILE" not in os.environ else os.environ["CONFIG_FILE"]
+CONFIG_FILENAME = "config.yaml" if "CONFIG_FILE" not in os.environ else os.environ[
+    "CONFIG_FILE"]
 SHIRT_PROCESSING_ADDRESS = os.environ["SHIRT_POROCESSING_ADDRESS"]
 
 app = Flask(__name__)
 bot = Bot(token=TELEGRAM_TOKEN)
 
 app_options = options.get_options(CONFIG_FILENAME)
-model = AppModel(bot, SHIRT_PROCESSING_ADDRESS)
-instance = Instance(model, app_options)
+app_model = AppModel(bot, SHIRT_PROCESSING_ADDRESS)
+app_state_factory = StateFactory(app_model, app_options)
+app_messager = Messager(app_model)
+instance = Instance(app_model, app_options, app_state_factory, app_messager)
 
 dispatcher = Dispatcher(bot=bot, update_queue=None)
 
