@@ -18,12 +18,13 @@ class Instance():
         self._state: State = self._state_factory.get_state(
             StateFactory.StateType.IDLE)
         self._messager: Messager = messager
-        self._messager.listen()
 
         self.model.events.started += self.on_started
         self.model.events.background_set += self.on_background_set
         self.model.events.shirts_received += self.on_shirts_received
         self.model.events.return_results += self.on_return_results
+
+        self.model.events.send_message += self.on_send_message
 
     def on_start_command(self, update: Update, context: CallbackContext):
         self.model.update = update
@@ -58,6 +59,9 @@ class Instance():
         self._state = self._state_factory.get_state(
             StateFactory.StateType.RETURNING_RESULT)
 
+    def on_send_message(self):
+        self._messager.send_message(self.model.chat_id, self.model.message)
+
     def on_return_results(self):
         for shirt in self.model.shirts:
             self.process_shirt(
@@ -74,4 +78,4 @@ class Instance():
         self.model.result = full_pipeline(
             self.model.url, self.options["PARAMS"]["RESIZE_PERCENTAGE"],
             background_filename, background_data, foreground_filename, foreground_data)
-        self._messager.send_file()
+        self._messager.send_file(self.model.chat_id, self.model.result)

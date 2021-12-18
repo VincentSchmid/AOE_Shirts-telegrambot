@@ -9,14 +9,17 @@ from src.State.StateFactory import StateFactory
 
 
 def test_Instance_event_calls(mocker: MockerFixture):
-    test_model: AppModel = AppModel({}, "http:abc.xyz/8000")
+    class MockBot():
+        def send_message(*args):
+            pass
+    
+    test_bot = MockBot()
+    test_bot.send_message = MagicMock()
+
+    test_model: AppModel = AppModel(test_bot, "http:abc.xyz/8000")
     test_options: dict = options.get_options("config.yaml")
     test_state_factory: StateFactory = StateFactory(test_model, test_options)
-    test_messager: Messager = Messager(test_model)
-    test_messager.send_telegram_message = MagicMock()
-    test_messager.send_file = MagicMock()
-
-    test_messager.listen()
+    test_messager: Messager = Messager(test_bot)
 
     test_instance: Instance = Instance(
         test_model, test_options, test_state_factory, test_messager)
