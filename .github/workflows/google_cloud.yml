@@ -31,14 +31,14 @@ jobs:
           project_id: ${{env.PROJECT_ID}}
 
       - name: Build
-        run: gcloud builds submit --tag gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:${GITHUB_SHA}
+        run: gcloud builds submit --tag gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}
 
       - id: 'deploy'
         name: Deploy
         uses: google-github-actions/deploy-cloudrun@main
         with:
           service: '${{env.APP_ID}}'
-          image: 'gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:$GITHUB_SHA'
+          image: 'gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}'
           project_id: '${{env.PROJECT_ID}}'
           env_vars: TOKEN=${{env.TELEGRAM_TOKEN}},SHIRT_POROCESSING_ADDRESS=${{env.SHIRT_POROCESSING_ADDRESS}},CONFIG_FILE=${{env.CONFIG_FILE}}
           
