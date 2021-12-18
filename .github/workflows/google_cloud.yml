@@ -29,6 +29,11 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{env.PROJECT_ID}}
+      
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
       - name: Build
         run: gcloud builds submit --tag gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:${GITHUB_SHA}
