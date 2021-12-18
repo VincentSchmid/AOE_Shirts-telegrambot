@@ -1,13 +1,11 @@
 from telegram.bot import Bot
-from telegram.message import Message
-from events import Events
 from telegram.update import Update
 
 
 class AppModel(object):
-    def __init__(self, bot: Bot, processing_url):
+    def __init__(self, bot: Bot, events, processing_url):
         self.bot: Bot = bot
-        self.events: Events = Events()
+        self.events = events
         self.shirts = []
         self.background = None
         self.result: bytes = None

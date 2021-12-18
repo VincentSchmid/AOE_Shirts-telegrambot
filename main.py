@@ -1,5 +1,6 @@
 import os
 import http
+from events.events import Events
 
 from flask import Flask, request
 from werkzeug.wrappers import Response
@@ -23,9 +24,11 @@ app = Flask(__name__)
 bot = Bot(token=TELEGRAM_TOKEN)
 
 app_options = options.get_options(CONFIG_FILENAME)
-app_model = AppModel(bot, SHIRT_PROCESSING_ADDRESS)
+app_events = Events()
+app_model = AppModel(bot, app_events, SHIRT_PROCESSING_ADDRESS)
 app_state_factory = StateFactory(app_model, app_options)
 app_messager = Messager(bot)
+
 instance = Instance(app_model, app_options, app_state_factory, app_messager)
 
 dispatcher = Dispatcher(bot=bot, update_queue=None)

@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock
+from events.events import Events
 from pytest_mock import MockerFixture
 
 from src.Model import AppModel
@@ -15,8 +16,9 @@ def test_Instance_event_calls(mocker: MockerFixture):
     
     test_bot = MockBot()
     test_bot.send_message = MagicMock()
+    test_events = Events()
 
-    test_model: AppModel = AppModel(test_bot, "http:abc.xyz/8000")
+    test_model: AppModel = AppModel(test_bot, test_events, "http:abc.xyz/8000")
     test_options: dict = options.get_options("config.yaml")
     test_state_factory: StateFactory = StateFactory(test_model, test_options)
     test_messager: Messager = Messager(test_bot)
