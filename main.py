@@ -46,7 +46,6 @@ dispatcher.add_handler(MessageHandler(Filters.document,
 dispatcher.add_handler(MessageHandler(Filters.photo,
                                       instance.on_photo_received))
 
-
 @app.post("/")
 def index() -> Response:
     dispatcher.process_update(

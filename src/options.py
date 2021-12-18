@@ -1,5 +1,4 @@
 import yaml
-from os import environ
 
 
 def read_yaml(file_path):

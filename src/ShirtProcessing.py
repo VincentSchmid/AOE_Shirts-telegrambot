@@ -15,11 +15,9 @@ def full_pipeline(url, resize_percentage:int, background_filename: str, backgrou
         ('foreground', (foreground_filename, foreground_data, f'image/{background_filetype}'))
     ]
     headers = {}
-
     response = requests.request("POST", req_url, headers=headers, data=payload, files=files)
 
     return response.content
-
 
 def get_imagetype(filename: str):
     file_ending = Path(filename).suffix
