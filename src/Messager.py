@@ -1,7 +1,5 @@
-from events.events import Events
 from telegram.bot import Bot
 from telegram import ParseMode
-from .Model import AppModel
 
 
 class Messager():
