@@ -20,11 +20,13 @@ export LOCAL_PORT := <local-port>
 export CONFIG_FILE := config.yaml
 export USERNAME := <dockerhub-username>
 ``` 
+
 The make command will build the container image:  
 
 ```bash
 make
 ``` 
+
 Alternatively, you can use:
 ```bash
 docker build -t shirt_bot .
