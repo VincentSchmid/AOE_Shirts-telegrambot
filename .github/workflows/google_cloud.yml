@@ -12,6 +12,7 @@ env:
   TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
   SHIRT_POROCESSING_ADDRESS: ${{ secrets.SHIRT_POROCESSING_ADDRESS }}
   CONFIG_FILE: config.yaml
+
 jobs:
   deploy:
     name: Deploy to Cloud Run
@@ -19,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Authenticate
+      - name: Setup
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: "290.0.1"
@@ -30,7 +31,7 @@ jobs:
         run: gcloud builds submit --tag gcr.io/$PROJECT_ID/$APP_ID:$GITHUB_SHA
 
       - name: Deploy
-        uses: 'google-github-actions/deploy-cloudrun@v0'
+      - uses: 'google-github-actions/deploy-cloudrun@v0'
         with:
           service: $APP_ID
           image: gcr.io/$PROJECT_ID/$APP_ID:$GITHUB_SHA
