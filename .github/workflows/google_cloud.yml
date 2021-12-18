@@ -37,9 +37,9 @@ jobs:
         name: Deploy
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          service: ${{env.APP_ID}}
-          image: gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:${GITHUB_SHA}
-          project_id: ${{env.PROJECT_ID}}
+          service: '${{env.APP_ID}}'
+          image: 'gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:${GITHUB_SHA}'
+          project_id: '${{env.PROJECT_ID}}'
           env_vars: TOKEN=$TELEGRAM_TOKEN,SHIRT_POROCESSING_ADDRESS=${{env.SHIRT_POROCESSING_ADDRESS}},CONFIG_FILE=${{env.CONFIG_FILE}}
           
       - name: Link
