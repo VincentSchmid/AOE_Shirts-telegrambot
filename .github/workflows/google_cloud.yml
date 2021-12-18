@@ -29,9 +29,6 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{env.PROJECT_ID}}
-      
-      - name: Dump GitHub sha
-        run: echo "$GITHUB_SHA"
 
       - name: Build
         run: gcloud builds submit --tag gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:${GITHUB_SHA}
@@ -41,7 +38,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@main
         with:
           service: '${{env.APP_ID}}'
-          image: 'gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:${GITHUB_SHA}'
+          image: 'gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:$GITHUB_SHA'
           project_id: '${{env.PROJECT_ID}}'
           env_vars: TOKEN=${{env.TELEGRAM_TOKEN}},SHIRT_POROCESSING_ADDRESS=${{env.SHIRT_POROCESSING_ADDRESS}},CONFIG_FILE=${{env.CONFIG_FILE}}
           
