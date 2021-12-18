@@ -29,19 +29,19 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           service_account_key: '${{ secrets.GCP_SA_KEY_JSON }}'
-          project_id: $PROJECT_ID
+          project_id: ${{env.PROJECT_ID}}
 
       - name: Build
-        run: gcloud builds submit --tag gcr.io/$PROJECT_ID/$APP_ID:$GITHUB_SHA
+        run: gcloud builds submit --tag gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:$GITHUB_SHA
 
       - id: 'deploy'
         name: Deploy
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          service: $APP_ID
-          image: gcr.io/$PROJECT_ID/$APP_ID:$GITHUB_SHA
-          project_id: $PROJECT_ID
-          env_vars: TOKEN=$TELEGRAM_TOKEN,SHIRT_POROCESSING_ADDRESS=$SHIRT_POROCESSING_ADDRESS,CONFIG_FILE=$CONFIG_FILE
+          service: ${{env.APP_ID}}
+          image: gcr.io/${{env.PROJECT_ID}}/${{env.APP_ID}}:$GITHUB_SHA
+          project_id: ${{env.PROJECT_ID}}
+          env_vars: TOKEN=$TELEGRAM_TOKEN,SHIRT_POROCESSING_ADDRESS=${{env.SHIRT_POROCESSING_ADDRESS}},CONFIG_FILE=${{env.CONFIG_FILE}}
           
       - name: Link
-        run: curl "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook?url=${{ steps.deploy.outputs.url }}"
+        run: curl "https://api.telegram.org/bot${{env.TELEGRAM_TOKEN}}/setWebhook?url=${{ steps.deploy.outputs.url }}"
