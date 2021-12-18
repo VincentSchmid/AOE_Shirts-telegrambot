@@ -8,7 +8,6 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   APP_ID: shirtbot
   RUN_REGION: us-central1
-  SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
   TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
   SHIRT_POROCESSING_ADDRESS: ${{ secrets.SHIRT_POROCESSING_ADDRESS }}
   CONFIG_FILE: config.yaml
@@ -20,18 +19,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY_JSON }}'
+
       - name: Setup
         uses: google-github-actions/setup-gcloud@master
         with:
-          version: "290.0.1"
-          service_account_key: ${{ secrets.GCP_SA_KEY_JSON }}
           project_id: $PROJECT_ID
 
       - name: Build
         run: gcloud builds submit --tag gcr.io/$PROJECT_ID/$APP_ID:$GITHUB_SHA
 
-      - name: Deploy
-        uses: 'google-github-actions/deploy-cloudrun@v0'
+      - id: 'deploy'
+        name: Deploy
+        uses: 'google-github-actions/deploy-cloudrun@main'
         with:
           service: $APP_ID
           image: gcr.io/$PROJECT_ID/$APP_ID:$GITHUB_SHA
