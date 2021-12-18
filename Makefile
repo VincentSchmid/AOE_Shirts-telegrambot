@@ -7,6 +7,7 @@ include params.mk
 	# CONTAINER_NAME
 	# LOCAL_PORT
 	# CONFIG_FILE
+	# USERNAME
 
 .DEFAULT_GOAL := build-container
 
@@ -16,7 +17,7 @@ deploy-gcloud: ## Deploys code to gcloud and links telegram bot to deployed inst
 	curl "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook?url="$$SERVICE_URL
 
 build-container: ## Builds the container (default target)
-	docker build -t schmivin/$(CONTAINER_NAME) .
+	docker build -t $(USERNAME)/$(CONTAINER_NAME) .
 
 run-container: build-container ## Builds the container and runs it locally
 	-docker stop $(CONTAINER_NAME)
