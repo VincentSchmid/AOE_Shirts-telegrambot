@@ -11,28 +11,28 @@ include params.mk
 
 .DEFAULT_GOAL := build-container
 
-build-gcloud:
+gcloud-build:
 	gcloud builds submit --tag gcr.io/$(GCLOUD_PROJECT_ID)/$(CONTAINER_NAME) --project=$(GCLOUD_PROJECT_ID)
 
-deploy-gcloud:
+gcloud-deploy:
 	gcloud run deploy $(CONTAINER_NAME) --image=gcr.io/$(GCLOUD_PROJECT_ID)/$(CONTAINER_NAME) --set-env-vars TOKEN=$(TELEGRAM_TOKEN),SHIRT_POROCESSING_ADDRESS=$(SHIRT_POROCESSING_ADDRESS),CONFIG_FILE=$(CONFIG_FILE) --project=$(GCLOUD_PROJECT_ID)  --platform=managed --allow-unauthenticated --region=$(GCLOUD_REGION) --memory=256Mi
 	
-link-gcloud:
+gcloud-link:
 	SERVICE_URL="$(shell gcloud run services describe ${CONTAINER_NAME} --format 'value(status.url)' --project $(GCLOUD_PROJECT_ID))"; \
 	curl "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook?url="$$SERVICE_URL
 
-run-gcloud: build-gcloud deploy-gcloud link-gcloud ## Deploys code to gcloud and links telegram bot to deployed instance
+gcloud-run: gcloud-build gcloud-deploy gcloud-link ## Deploys code to gcloud and links telegram bot to deployed instance
 
-build-container: ## Builds the container (default target)
+container-build: ## Builds the container (default target)
 	docker build -t $(USERNAME)/$(CONTAINER_NAME) .
 
-deploy-container: build-container ## Builds the container and runs it locally
+container-deploy: container-build ## Builds the container and runs it locally
 	-docker stop $(CONTAINER_NAME)
 	-docker rm $(CONTAINER_NAME)
 	docker run --env PORT=$(LOCAL_PORT) --env SHIRT_POROCESSING_ADDRESS=$(SHIRT_POROCESSING_ADDRESS) --env TOKEN=$(TELEGRAM_TOKEN) --env CONFIG_FILE=${CONFIG_FILE} --name $(CONTAINER_NAME) -d schmivin/$(CONTAINER_NAME)
 	# docker exec -t -i $(CONTAINER_NAME) /bin/bash
 
-run-locally: ## Runs app localy without container
+local-run: ## Runs app localy without container
 	export TOKEN=$(TELEGRAM_TOKEN) && \
 	uvicorn main:app --reload --port ${LOCAL_PORT}
 
