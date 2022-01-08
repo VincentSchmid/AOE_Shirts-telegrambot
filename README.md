@@ -34,7 +34,7 @@ docker build -t shirt_bot .
 
 The Makefile contains an automated deployment to Gcloud using Cloud Run. This will also link the Telegram bot, to the deployed instance:
 ```bash
-make run-gcloud
+make gcloud-run
 ```
 
 To manually link a bot to a deployed service, use this command:
