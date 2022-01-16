@@ -4,3 +4,5 @@ python-telegram-bot==13.7
 requests==2.26.0
 Events==0.4
 pyyaml==6.0
+apscheduler
+tzlocal<3.0
