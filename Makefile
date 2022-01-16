@@ -26,13 +26,16 @@ gcloud-run: gcloud-build gcloud-deploy gcloud-link ## Deploys code to gcloud and
 container-build: ## Builds the container (default target)
 	docker build -t $(USERNAME)/$(CONTAINER_NAME) .
 
-container-deploy: container-build ## Builds the container and runs it locally
+container-deploy: ## Runs bot in container
 	-docker stop $(CONTAINER_NAME)
 	-docker rm $(CONTAINER_NAME)
-	docker run --env PORT=$(LOCAL_PORT) --env SHIRT_POROCESSING_ADDRESS=$(SHIRT_POROCESSING_ADDRESS) --env TOKEN=$(TELEGRAM_TOKEN) --env CONFIG_FILE=${CONFIG_FILE} --name $(CONTAINER_NAME) -d schmivin/$(CONTAINER_NAME)
+	docker run --env PORT=$(LOCAL_PORT) --env SHIRT_POROCESSING_ADDRESS=$(SHIRT_POROCESSING_ADDRESS) --env TOKEN=$(TELEGRAM_TOKEN) --env CONFIG_FILE=${CONFIG_FILE} --name $(CONTAINER_NAME) -d -p $(LOCAL_PORT):$(LOCAL_PORT) schmivin/$(CONTAINER_NAME)
 	# docker exec -t -i $(CONTAINER_NAME) /bin/bash
-	# docker logs -f $(CONTAINER_NAME)
+	docker logs -f $(CONTAINER_NAME)
 
+container-stop: ## Stops bot
+	-docker stop $(CONTAINER_NAME)
+	
 local-run: ## Runs app localy without container
 	export TOKEN=$(TELEGRAM_TOKEN) && \
 	uvicorn main:app --reload --port ${LOCAL_PORT}

@@ -16,7 +16,7 @@ class Instance():
         self.model: AppModel = model
         self._state_factory: StateFactory = state_factory
         self._state: State = self._state_factory.get_state(
-            StateFactory.StateType.IDLE)
+            StateFactory.StateType.IDLE, self.model)
         self._messager: Messager = messager
 
         self.model.events.started += self.on_started
@@ -33,7 +33,7 @@ class Instance():
     def on_help_command(self, update: Update, context: CallbackContext):
         self.model.update = update
         self._state = self._state_factory.get_state(
-            StateFactory.StateType.HELP)
+            StateFactory.StateType.HELP, self.model)
 
     def on_done_command(self, update: Update, context: CallbackContext):
         self.model.update = update
@@ -49,15 +49,15 @@ class Instance():
 
     def on_started(self):
         self._state = self._state_factory.get_state(
-            StateFactory.StateType.SETTING_BACKGROUND)
+            StateFactory.StateType.SETTING_BACKGROUND, self.model)
 
     def on_background_set(self):
         self._state = self._state_factory.get_state(
-            StateFactory.StateType.RECEIVING_SHIRTS)
+            StateFactory.StateType.RECEIVING_SHIRTS, self.model)
 
     def on_shirts_received(self):
         self._state = self._state_factory.get_state(
-            StateFactory.StateType.RETURNING_RESULT)
+            StateFactory.StateType.RETURNING_RESULT, self.model)
 
     def on_send_message(self):
         self._messager.send_message(self.model.chat_id, self.model.message)

@@ -1,7 +1,6 @@
 import os
-import http
 
-from flask import Flask, request
+from fastapi import FastAPI, Request, status
 from werkzeug.wrappers import Response
 
 from src.State.StateFactory import StateFactory
@@ -18,11 +17,11 @@ CONFIG_FILENAME = "config.yaml" if "CONFIG_FILE" not in os.environ else os.envir
     "CONFIG_FILE"]
 SHIRT_PROCESSING_ADDRESS = os.environ["SHIRT_POROCESSING_ADDRESS"]
 
-app = Flask(__name__)
+app = FastAPI()
 bot = Bot(token=TELEGRAM_TOKEN)
 
 app_options = options.get_options(CONFIG_FILENAME)
-app_state_factory = StateFactory(app_model, app_options)
+app_state_factory = StateFactory(app_options)
 app_messager = Messager(bot)
 
 app_instance_handler = InstanceHandler(SHIRT_PROCESSING_ADDRESS,
@@ -55,8 +54,10 @@ dispatcher.add_handler(MessageHandler(Filters.document, document_handler))
 dispatcher.add_handler(MessageHandler(Filters.photo, photo_handler))
 
 @app.post("/")
-def index() -> Response:
-    dispatcher.process_update(
-        Update.de_json(request.get_json(force=True), bot))
+async def index(request: Request) -> Response:
+    req_json = await request.json()
 
-    return "", http.HTTPStatus.NO_CONTENT
+    dispatcher.process_update(
+        Update.de_json(req_json, bot))
+
+    return Response(status = status.HTTP_204_NO_CONTENT)

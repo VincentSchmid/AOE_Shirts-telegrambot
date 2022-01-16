@@ -17,12 +17,11 @@ class StateFactory():
         RETURNING_RESULT = 3
         HELP = 4
 
-    def __init__(self, model: AppModel, options: dict):
-        self.model: AppModel = model
+    def __init__(self, options: dict):
         self.options: dict = options
 
-    def get_state(self, stateType: StateType):
-        params = [self.model, self.options]
+    def get_state(self, stateType: StateType, model: AppModel):
+        params = [model, self.options]
         return {
             stateType.IDLE: Idle,
             stateType.SETTING_BACKGROUND: SettingBackground,

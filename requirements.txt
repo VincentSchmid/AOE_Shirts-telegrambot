@@ -1,8 +1,10 @@
-flask==2.0.2
+fastapi==0.71.0
+werkzeug
 gunicorn==20.1.0
 python-telegram-bot==13.7
 requests==2.26.0
 Events==0.4
 pyyaml==6.0
 apscheduler
+uvicorn[standard]
 tzlocal<3.0
