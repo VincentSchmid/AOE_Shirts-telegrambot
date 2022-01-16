@@ -31,10 +31,14 @@ container-deploy: container-build ## Builds the container and runs it locally
 	-docker rm $(CONTAINER_NAME)
 	docker run --env PORT=$(LOCAL_PORT) --env SHIRT_POROCESSING_ADDRESS=$(SHIRT_POROCESSING_ADDRESS) --env TOKEN=$(TELEGRAM_TOKEN) --env CONFIG_FILE=${CONFIG_FILE} --name $(CONTAINER_NAME) -d schmivin/$(CONTAINER_NAME)
 	# docker exec -t -i $(CONTAINER_NAME) /bin/bash
+	# docker logs -f $(CONTAINER_NAME)
 
 local-run: ## Runs app localy without container
 	export TOKEN=$(TELEGRAM_TOKEN) && \
 	uvicorn main:app --reload --port ${LOCAL_PORT}
+
+local-link:
+	curl "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook?url="$(SERVICE_URL)
 
 test: ## Runs test and return coverage report
 	pytest --cov=src tests/
