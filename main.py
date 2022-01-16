@@ -1,13 +1,11 @@
 import os
 import http
-from events.events import Events
 
 from flask import Flask, request
 from werkzeug.wrappers import Response
 
 from src.State.StateFactory import StateFactory
-from src.Model import AppModel
-from src.Instance import Instance
+from src.InstanceHandler import InstanceHandler
 from src.Messager import Messager
 import src.options as options
 
@@ -24,27 +22,37 @@ app = Flask(__name__)
 bot = Bot(token=TELEGRAM_TOKEN)
 
 app_options = options.get_options(CONFIG_FILENAME)
-app_events = Events()
-app_model = AppModel(bot, app_events, SHIRT_PROCESSING_ADDRESS)
 app_state_factory = StateFactory(app_model, app_options)
 app_messager = Messager(bot)
 
-instance = Instance(app_model, app_options, app_state_factory, app_messager)
+app_instance_handler = InstanceHandler(SHIRT_PROCESSING_ADDRESS,
+                                  app_options,
+                                  app_state_factory,
+                                  app_messager,
+                                  bot)
+
+def start_handler(update, context):
+    app_instance_handler.get_instance(update.message.chat_id).on_start_command(update, context)
+
+def done_handler(update, context):
+    app_instance_handler.get_instance(update.message.chat_id).on_done_command(update, context)
+
+def help_handler(update, context):
+    app_instance_handler.get_instance(update.message.chat_id).on_help_command(update, context)
+
+def document_handler(update, context):
+    app_instance_handler.get_instance(update.message.chat_id).on_document_received(update, context)
+
+def photo_handler(update, context):
+    app_instance_handler.get_instance(update.message.chat_id).on_photo_received(update, context)
 
 dispatcher = Dispatcher(bot=bot, update_queue=None)
 
-dispatcher.add_handler(CommandHandler(
-    app_options["COMMANDS"]["START"], instance.on_start_command))
-dispatcher.add_handler(CommandHandler(
-    app_options["COMMANDS"]["DONE"], instance.on_done_command))
-dispatcher.add_handler(CommandHandler(
-    app_options["COMMANDS"]["HELP"], instance.on_help_command))
-
-dispatcher.add_handler(MessageHandler(Filters.document,
-                                      instance.on_document_received))
-
-dispatcher.add_handler(MessageHandler(Filters.photo,
-                                      instance.on_photo_received))
+dispatcher.add_handler(CommandHandler(app_options["COMMANDS"]["START"], start_handler))
+dispatcher.add_handler(CommandHandler(app_options["COMMANDS"]["DONE"], done_handler))
+dispatcher.add_handler(CommandHandler(app_options["COMMANDS"]["HELP"], help_handler))
+dispatcher.add_handler(MessageHandler(Filters.document, document_handler))
+dispatcher.add_handler(MessageHandler(Filters.photo, photo_handler))
 
 @app.post("/")
 def index() -> Response:
