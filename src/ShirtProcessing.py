@@ -7,12 +7,12 @@ def full_pipeline(url, resize_percentage:int, background_filename: str, backgrou
     req_url = url + f"/full_pipeline/?resize_percentage={resize_percentage}"
 
     background_filetype = get_imagetype(background_filename)
-    background_filetype = get_imagetype(foreground_filename)
+    foreground_filetype = get_imagetype(foreground_filename)
 
     payload={}
     files=[
         ('background', (background_filename, background_data, f'image/{background_filetype}')),
-        ('foreground', (foreground_filename, foreground_data, f'image/{background_filetype}'))
+        ('foreground', (foreground_filename, foreground_data, f'image/{foreground_filetype}'))
     ]
     headers = {}
     response = requests.request("POST", req_url, headers=headers, data=payload, files=files)
